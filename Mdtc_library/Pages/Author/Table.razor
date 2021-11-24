@@ -1,0 +1,54 @@
+@using Mdtc_library.Data
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Books</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var author in Authors)
+    {
+        <tr>
+            <td>@author.Name</td>
+            <td>
+                @if (author.Books == null)
+                {
+                    @:-
+                }
+                else
+                {
+                    @foreach (var book in author.Books)
+                    {
+                        @book.Name
+                        @:<br>
+                    }
+                }
+            </td>
+            <td>
+                <button
+                    class="btn btn-primary btn-sm"
+                    type="button">
+                    Edit
+                </button>
+                <button
+                    class="btn btn-danger btn-sm"
+                    type="button"
+                    @onclick="() => OnRemoveAction.Invoke(author.Id)">
+                    Remov
+                </button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public Author[] Authors { get; set; }
+    
+    [Parameter]
+    public Func<Guid, Task> OnRemoveAction { get; set; }
+}

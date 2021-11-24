@@ -1,0 +1,6 @@
+@inherits AuthorSearchComponent
+
+<div>
+    <input type="text"  @bind="Value">
+    <button type="button" class="btn btn-primary" @onclick="@(async () => await OnSearch(Value))">Search</button>
+</div>
