@@ -1,42 +1,47 @@
 @page "/authors"
 
-<PageTitle>List of authors</PageTitle>
+@inherits AuthorComponent;
 
-@using Mdtc_library.Data
-@using Mdtc_library.Model
-@inject AuthorService _service
+<PageTitle>List of authors</PageTitle>
 
 <div class="navbar">
     <h1>List of authors</h1>
     <button type="button" class="btn btn-primary" @onclick="ToggleModal">Add author</button>
 </div>
 
-<div class="modal @ModalCssClass" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create Author</h5>
-                <button type="button" class="btn close" @onclick="ToggleModal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input id="name" type="text" class="form-control" required placeholder="Enter name" @bind="_editableAuthor.Name">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateRecord())">Save changes</button>
-                <button type="button" class="btn btn-secondary" @onclick="ToggleModal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
+<Search OnSearch="SearchAsync"></Search>
 
-@if (_authors == null)
+<Modal 
+    @bind-State="ModalState"
+    Model="Model" 
+    OnCreateRecord="CreateAsync"></Modal>
+
+@* <div class="modal @ModalCssClass" tabindex="-1" role="dialog"> *@
+@*     <div class="modal-dialog" role="dialog"> *@
+@*         <div class="modal-content"> *@
+@*             <div class="modal-header"> *@
+@*                 <h5 class="modal-title">Create Author</h5> *@
+@*                 <button type="button" class="btn close" @onclick="ToggleModal"> *@
+@*                     <span>&times;</span> *@
+@*                 </button> *@
+@*             </div> *@
+@*             <div class="modal-body"> *@
+@*                 <form> *@
+@*                     <div class="form-group"> *@
+@*                         <label for="name">Name</label> *@
+@*                         <input id="name" type="text" class="form-control" required placeholder="Enter name" @bind="EditableAuthor.Name"> *@
+@*                     </div> *@
+@*                 </form> *@
+@*             </div> *@
+@*             <div class="modal-footer"> *@
+@*                 <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateRecord())">Save changes</button> *@
+@*                 <button type="button" class="btn btn-secondary" @onclick="ToggleModal">Cancel</button> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+
+@if (Authors == null || Authors.Length == 0)
 {
     <p>
         <em>There is no authors yet.</em>
@@ -44,44 +49,5 @@
 }
 else
 {
-    <Table Authors="_authors" OnRemoveAction="RemoveRecord"></Table>
-}
-
-@code {
-    private AuthorModel _editableAuthor = new ();
-    
-    private Author[]? _authors;
-    
-    private bool _modalOpened = false;
-
-    private string? ModalCssClass => _modalOpened ? "collapse" : null;
-
-    private void ToggleModal()
-    {
-        _modalOpened = !_modalOpened;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        _authors = await FetchRecords();
-    }
-
-    private async Task RemoveRecord(Guid id)
-    {
-        await _service.RemoveAsync(id);
-        _authors = await FetchRecords();
-    }
-
-    private async Task<Author[]?> FetchRecords()
-    {
-        return await _service.AllAsync();
-    }
-
-    private async Task CreateRecord()
-    {
-        _modalOpened = false;
-        await _service.CreateAsync(_editableAuthor);
-        _authors = await FetchRecords();
-        _editableAuthor = new AuthorModel();
-    }
+    <Table Authors="Authors" OnRemoveAction="RemoveAsync"></Table>
 }

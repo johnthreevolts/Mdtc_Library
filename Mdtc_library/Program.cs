@@ -1,21 +1,32 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Mdtc_library;
 using Mdtc_library.Data;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<SqliteContext>(options 
+    => options.UseSqlite("Data Source=library.db"));
+
+builder.Services.AddResponseCompression(config =>
+{
+    config.Providers.Add<BrotliCompressionProvider>();
+    config.Providers.Add<GzipCompressionProvider>();
+    config.EnableForHttps = true;
+});
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<BookService>();
+builder.Services.AddScoped<AuthorService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseResponseCompression();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

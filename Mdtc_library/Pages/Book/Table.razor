@@ -1,42 +1,24 @@
-@using Mdtc_library.Data
+@inherits BookTableComponent
 
 <table class="table">
     <thead>
     <tr>
         <th>Name</th>
-        <th>Books</th>
+        <th>Author</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var author in Authors)
+    @foreach (var book in Books)
     {
         <tr>
-            <td>@author.Name</td>
+            <td>@book.Name</td>
+            <td>@book.Author.Name</td>
             <td>
-                @if (author.Books == null)
-                {
-                    @:-
-                }
-                else
-                {
-                    @foreach (var book in author.Books)
-                    {
-                        @book.Name
-                        @:<br>
-                    }
-                }
-            </td>
-            <td>
-                <button
-                    class="btn btn-primary btn-sm"
-                    type="button">
-                    Edit
-                </button>
                 <button
                     class="btn btn-danger btn-sm"
                     type="button"
-                    @onclick="() => OnRemoveAction.Invoke(author.Id)">
+                    @onclick="() => OnRemoveAction.Invoke(book.Id)">
                     Remove
                 </button>
             </td>
@@ -44,11 +26,3 @@
     }
     </tbody>
 </table>
-
-@code {
-    [Parameter]
-    public Author[] Authors { get; set; }
-    
-    [Parameter]
-    public Func<Guid, Task> OnRemoveAction { get; set; }
-}

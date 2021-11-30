@@ -1,9 +1,9 @@
 using Mdtc_library.Model;
 using Microsoft.AspNetCore.Components;
 
-namespace Mdtc_library.Pages.Author;
+namespace Mdtc_library.Pages.Book;
 
-public class AuthorModalComponent : ComponentBase
+public class BookModalComponent : ComponentBase
 {
     [Parameter]
     public bool State { get; set; }
@@ -12,10 +12,13 @@ public class AuthorModalComponent : ComponentBase
     public EventCallback<bool> StateChanged { get; set; }
     
     [Parameter]
-    public AuthorModel Model { get; set; }
+    public BookModel Model { get; set; }
+    
+    [Parameter]
+    public Data.Author[] Authors { get; set; }
 
     [Parameter]
-    public Func<AuthorModel, Task> OnCreateRecord { get; set; }
+    public Func<BookModel, Task> OnCreateRecord { get; set; }
 
     protected string? ModalCssClass => State ? "collapse" : null;
     

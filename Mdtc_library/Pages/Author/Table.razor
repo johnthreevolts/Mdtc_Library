@@ -1,4 +1,4 @@
-@using Mdtc_library.Data
+@inherits AuthorTableComponent
 
 <table class="table">
     <thead>
@@ -29,26 +29,13 @@
             </td>
             <td>
                 <button
-                    class="btn btn-primary btn-sm"
-                    type="button">
-                    Edit
-                </button>
-                <button
                     class="btn btn-danger btn-sm"
                     type="button"
                     @onclick="() => OnRemoveAction.Invoke(author.Id)">
-                    Remov
+                    Remove
                 </button>
             </td>
         </tr>
     }
     </tbody>
 </table>
-
-@code {
-    [Parameter]
-    public Author[] Authors { get; set; }
-    
-    [Parameter]
-    public Func<Guid, Task> OnRemoveAction { get; set; }
-}

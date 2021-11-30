@@ -1,12 +1,21 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Mdtc_library.Data;
 
-public class WeatherForecast
+public class Book
 {
-    public DateTime Date { get; set; }
+    public Guid Id { get; } = Guid.NewGuid();
+    
+    public string Name { get; set; }
+    
+    public Author Author { get; set; }
 
-    public int TemperatureC { get; set; }
-
-    public int TemperatureF => 32 + (int) (TemperatureC / 0.5556);
-
-    public string? Summary { get; set; }
+    internal static void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<Book>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasOne(x => x.Author);
+        });
+    }
 }

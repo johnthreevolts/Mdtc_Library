@@ -1,10 +1,10 @@
-@inherits AuthorModalComponent
+@inherits BookModalComponent
 
 <div class="modal @ModalCssClass" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Create Author</h5>
+                <h5 class="modal-title">Create Book</h5>
                 <button type="button" class="btn close" @onclick="UpdateState">
                     <span>&times;</span>
                 </button>
@@ -14,6 +14,17 @@
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input id="name" type="text" class="form-control" required placeholder="Enter name" @bind="Model.Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <div>
+                            <select id="author" required class="custom-select" @bind="Model.Author">
+                                @foreach (var author in Authors)
+                                {
+                                    <option value="@author.Id">@author.Name</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </form>
             </div>

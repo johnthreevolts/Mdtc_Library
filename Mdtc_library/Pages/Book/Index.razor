@@ -2,11 +2,7 @@
 
 <PageTitle>List of books</PageTitle>
 
-@using Mdtc_library.Data
-@using Mdtc_library.Model
-@using Microsoft.AspNetCore.Components
-@inject BookService _service
-@inject AuthorService _authorService
+@inherits BookComponent
 
 
 <div class="navbar">
@@ -14,43 +10,15 @@
     <button type="button" class="btn btn-primary" @onclick="ToggleModal">Add book</button>
 </div>
 
-<div class="modal @ModalCssClass" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create Book</h5>
-                <button type="button" class="btn close" @onclick="ToggleModal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input id="name" type="text" class="form-control" required placeholder="Enter name" @bind="_editableCreateBook.Name">
-                    </div>
-                    <div class="form-group">
-                        <label for="author">Author</label>
-                        <div>
-                            <select id="author" required class="custom-select" @bind="_editableCreateBook.Author">
-                                @foreach (var author in _authors)
-                                {
-                                    <option value="@author.Id">@author.Name</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateRecord())">Save changes</button>
-                <button type="button" class="btn btn-secondary" @onclick="ToggleModal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
+<Search OnSearch="SearchAsync"></Search>
 
-@if (_books == null)
+<Modal 
+    @bind-State="ModalState"
+    Model="Model" 
+    Authors="Authors"
+    OnCreateRecord="CreateAsync"></Modal>
+
+@if (Books == null || Books.Length == 0)
 {
     <p>
         <em>There is no books yet.</em>
@@ -58,82 +26,5 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Author</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var book in _books)
-        {
-            <tr>
-                <td>@book.Name</td>
-                <td>@book.Author.Name</td>
-                <td>
-                    <button
-                        class="btn btn-primary btn-sm"
-                        type="button">
-                        Edit
-                    </button>
-                    <button
-                        class="btn btn-danger btn-sm"
-                        type="button"
-                        @onclick="@(async () => await RemoveRecord(book.Id))">
-                        Remove
-                    </button>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
-
-@code {
-    private CreateBookModel _editableCreateBook = new ();
-
-    private Book[]? _books;
-
-    private Author[]? _authors;
-
-    private bool _modalOpened = false;
-
-    private string? ModalCssClass => _modalOpened ? "collapse" : null;
-
-    private void ToggleModal()
-    {
-        _modalOpened = !_modalOpened;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        _books = await FetchRecords();
-        _authors = await FetchAuthors();
-    }
-
-    private async Task RemoveRecord(Guid id)
-    {
-        await _service.RemoveAsync(id);
-        _books = await FetchRecords();
-    }
-
-    private async Task<Book[]?> FetchRecords()
-    {
-        return await _service.AllAsync();
-    }
-
-    private async Task<Author[]?> FetchAuthors()
-    {
-        return await _authorService.AllAsync();
-    }
-
-    private async Task CreateRecord()
-    {
-        _modalOpened = false;
-        await _service.CreateAsync(_editableCreateBook);
-        _books = await FetchRecords();
-        _editableCreateBook = new CreateBookModel();
-    }
+    <Table Books="Books" OnRemoveAction="RemoveAsync"></Table>
 }
